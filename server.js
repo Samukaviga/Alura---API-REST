@@ -3,7 +3,9 @@
 // npm install express@4.17.3
 // npm run dev
 //npm install mongoose@6.2.6
- import app from './src/app.js';
+// npm install dotenv@16.0.3
+import "dotenv/config"; //para que o dotenv faca suas configuracoes de VAR de ambiente
+import app from './src/app.js';
 const port = process.env.PORT || 8080;
 
 
