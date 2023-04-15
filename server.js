@@ -4,11 +4,12 @@
 // npm run dev
 //npm install mongoose@6.2.6
 // npm install dotenv@16.0.3
-import "dotenv/config"; //para que o dotenv faca suas configuracoes de VAR de ambiente
-import app from './src/app.js';
+// npm init @eslint/config  // npx eslint ./src --fix Coloca ; nos arquivos do projeto 
+import "dotenv/config"; //para que o dotenv faca suas configuracoes de VAR de ambiente 
+import app from "./src/app.js";
 const port = process.env.PORT || 8080;
 
 
 app.listen(port, () => {
-    console.log(`Servidor escutando em http://localhost:${port}`)
+  console.log(`Servidor escutando em http://localhost:${port}`);
 });
