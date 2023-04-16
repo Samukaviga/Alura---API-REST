@@ -4,7 +4,7 @@
 // npm run dev
 //npm install mongoose@6.2.6
 // npm install dotenv@16.0.3
-// npm init @eslint/config  // npx eslint ./src --fix Coloca ; nos arquivos do projeto 
+// npm init @eslint/config  // npx eslint ./src --fix Coloca ; nos arquivos do projeto. ESLint nos ajuda a manter a padronização de formatação de arquivos
 import "dotenv/config"; //para que o dotenv faca suas configuracoes de VAR de ambiente 
 import app from "./src/app.js";
 const port = process.env.PORT || 8080;
