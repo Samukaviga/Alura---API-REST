@@ -13,7 +13,6 @@ const app = express();
 app.use(express.json()); //recurso do empress que vai ajudar a interpretar oq ta chegando via POST ou PUT
 routes(app);
 
-// eslint-disable-next-line no-unused-vars
 app.use(manipuladorDeErros);
 
 export default app;
