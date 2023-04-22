@@ -1,24 +1,27 @@
+import NaoEncontrado from "../erros/NaoEncontrado.js";
 import autores from "../models/Autor.js";
 
 class AutorController {
 
-  static listarAutores = async (req, res) => {
+  static listarAutores = async (req, res, next) => {
     try{
       const autoresResultado = await autores.find();
       res.status(200).json(autoresResultado);
     } catch(erro){
-      res.status(500).json({message: `${erro.message} - Erro interno no servidor.`});
+      next(erro);
     }
+
   };
 
   static listarAutorPorId = async (req, res, next) => {
     try{
       let id = req.params.id;
       const autorResultado = await autores.findById(id);
+
       if(autorResultado !== null){
         res.status(200).send(autorResultado);
       }else {
-        res.status(404).send({message: "Id do Autor nao encontrado"});
+        next(new NaoEncontrado("Id do Autor nao encontrado"));
       }
     } catch (erro) {
       next(erro); //encaminha o erro para o middleware de tratamento de erro
@@ -41,8 +44,13 @@ class AutorController {
   static atualizarAutor = async (req, res, next) => {
     try{
       let id = req.params.id;
-      await autores.findByIdAndUpdate(id, {$set: req.body});
-      res.status(200).send({message: "Autor atualizado com sucesso!"});      
+      const autorResposta = await autores.findByIdAndUpdate(id, {$set: req.body});
+
+      if(autorResposta !== null){
+        res.status(200).send({message: "Autor atualizado com sucesso!"});
+      } else {
+        next(new NaoEncontrado("Id do Autor nao encontrado"));
+      }    
     } catch(erro){
       next(erro);
     }
@@ -50,16 +58,18 @@ class AutorController {
   };
 
   static deletarAutor = async (req, res, next) => {
-    
     try{
       let id = req.params.id;
-      await autores.findByIdAndDelete(id);
-      res.status(200).send({message: "Autor deletado com sucesso!"});
+      const autorResposta = await autores.findByIdAndDelete(id);
+      
+      if(autorResposta !== null){
+        res.status(200).send({message: "Autor deletado com sucesso!"});
+      } else {
+        next(new NaoEncontrado("Id do Autor nao encontrado"));
+      }
     } catch(erro){
       next(erro);
     } 
-
-  
   };
 
 }
