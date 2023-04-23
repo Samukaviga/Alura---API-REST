@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 const autorSchema = new mongoose.Schema(
   {
     id: {type: String},
-    nome: {type: String, required: [true, "O nome do(a) é obrigatorio."]}, //personalisando o erro
+    nome: {
+      type: String, 
+      required: [true, "O nome do(a) é obrigatorio."] //personalisando o erro
+    }, 
     nacionalidade: {type: String}
   },
   {
