@@ -74,11 +74,12 @@ class LivroController {
     }
   };
 
-  static listarLivroPorEditora = async (req, res, next) => {
+  static listarLivroPorFiltro = async (req, res, next) => {
     try{
-      const editora = req.query.editora;
- 
-      const livroResposta = await livros.find({"editora": editora}, {});
+      
+      const busca = processaBusca(req.query);
+
+      const livroResposta = await livros.find(busca);
       res.status(200).send(livroResposta);
     } catch(erro){
       next(erro);
@@ -87,5 +88,25 @@ class LivroController {
   };
 
 }
+
+function processaBusca(req){
+  const {editora, titulo, minPaginas, maxPaginas} = req;
+      
+  const busca = {};
+
+  if(editora) busca.editora = { $regex: editora, $options: "i"};
+  if(titulo) busca.titulo = { $regex: titulo, $options: "i"}; //Regex do MongoDB, 'i' para diferenciar maius. e minus.
+  
+  if(minPaginas || maxPaginas) busca.numeroPaginas = {};
+
+  // gte = Greater Than or Equal = Maior ou igual que
+  if(minPaginas) busca.numeroPaginas.$gte = minPaginas; //Nao sobreescreve quando receber os dois parametros
+  // lte = Less Than or Equal = menor ou igual que
+  if(maxPaginas) busca.numeroPaginas.$lte = maxPaginas;
+
+  return busca;
+}
+
+
 
 export default LivroController;
