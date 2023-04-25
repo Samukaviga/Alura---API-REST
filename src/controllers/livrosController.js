@@ -6,10 +6,12 @@ class LivroController {
 
   static listarLivros = async (req, res, next) => {
     try{
-      const livrosResposta = await livros.find()
-        .populate("autor")
-        .exec();
-      res.status(200).json(livrosResposta);
+      
+      const buscarLivros = livros.find();
+    
+      req.resultado = buscarLivros;
+      next(); //para executar o proximo middleware
+
     } catch(erro){
       next(erro);
     }
@@ -18,9 +20,9 @@ class LivroController {
   static listarLivroPorId = async (req, res, next) => {
     try{
       const id = req.params.id;
-      const livroResposta = await livros.findById(id)
-        .populate("autor", "nome")
-        .exec();
+      const livroResposta = await livros.findById(id, {}, {autopopulate: false})
+        .populate("autor"); 
+      // .exec(); se torna opcional quando se usa o async/await
 
       if(livroResposta !== null){
         res.status(200).send(livroResposta);
@@ -76,18 +78,20 @@ class LivroController {
 
   static listarLivroPorFiltro = async (req, res, next) => {
     try{
-      
       const busca = await processaBusca(req.query);
 
-      const livroResposta = await livros
-        .find(busca)
-        .populate("autor");
+      if(busca !== null){
+        const livroResposta = livros.find(busca);
 
-      res.status(200).send(livroResposta);
-    } catch(erro){
+        req.resultado = livroResposta;
+  
+        next();
+      } else {
+        res.status(200).send([]);
+      }
+    } catch (erro){
       next(erro);
     }
-
   };
 
 }
@@ -95,7 +99,7 @@ class LivroController {
 async function processaBusca(req){
   const {editora, titulo, minPaginas, maxPaginas, nomeAutor} = req;
       
-  const busca = {};
+  let busca = {};
 
   if(editora) busca.editora = { $regex: editora, $options: "i"};
   if(titulo) busca.titulo = { $regex: titulo, $options: "i"}; //Regex do MongoDB, 'i' para diferenciar maius. e minus.
@@ -112,9 +116,11 @@ async function processaBusca(req){
 
     const autor = await autores.findOne({nome: nomeRegex});
 
-    const autorId = autor._id;
-
-    busca.autor = autorId;
+    if(autor !== null){
+      busca.autor = autor._id;
+    } else {
+      busca = null;
+    }
   }
 
   return busca;
